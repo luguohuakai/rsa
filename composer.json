@@ -1,0 +1,22 @@
+{
+    "name": "luguohuakai/rsa",
+    "description": "simple ssl rsa sign verify",
+    "type": "library",
+    "require": {
+        "php": ">=7.4",
+        "phpseclib/phpseclib": "^3.0",
+        "ext-openssl": "*"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Luguohuakai\\Rsa\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "DM",
+            "email": "769245396@qq.com"
+        }
+    ]
+}
