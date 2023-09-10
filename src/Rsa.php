@@ -5,27 +5,40 @@ namespace Luguohuakai\Rsa;
 class Rsa implements base\Rsa
 {
     private $privateKey;
+    private $privateKeyString;
     private $publicKey;
+    private $publicKeyString;
 
-    public function __construct($privateKeyFile, $publicKeyFile)
+    /**
+     * @param string $privateKeyFile 私钥位置
+     * @param string $publicKeyFile 公钥位置
+     */
+    public function __construct(string $privateKeyFile, string $publicKeyFile)
     {
         $this->privateKey = openssl_pkey_get_private("file://$privateKeyFile");
+//        openssl_get_privatekey($this->privateKey);
+
         $this->publicKey = openssl_pkey_get_public("file://$publicKeyFile");
     }
 
-    public function sign($str, $algo = OPENSSL_ALGO_SHA1): ?string
+    /**
+     * @param $str
+     * @param int $algo
+     * @return string|null
+     */
+    public function sign($str, int $algo = OPENSSL_ALGO_SHA1): ?string
     {
         if (!is_string($str)) return null;
         return openssl_sign($str, $sign, $this->privateKey, $algo) ? base64_encode($sign) : null;
     }
 
-    public function signPss($str): string
-    {
-        openssl_pkey_export($this->privateKey, $output);
-        return base64_encode(\phpseclib3\Crypt\RSA::loadPrivateKey($output)->sign($str));
-    }
-
-    public function verify($str, $sign, $algo = OPENSSL_ALGO_SHA1): ?bool
+    /**
+     * @param $str
+     * @param $sign
+     * @param int $algo
+     * @return bool|null
+     */
+    public function verify($str, $sign, int $algo = OPENSSL_ALGO_SHA1): ?bool
     {
         if (!is_string($str)) return null;
         $rs = openssl_verify($str, base64_decode($sign), $this->publicKey, $algo);
@@ -33,10 +46,25 @@ class Rsa implements base\Rsa
         return false;
     }
 
+    /**
+     * @param $str
+     * @return string
+     */
+    public function signPss($str): string
+    {
+        openssl_pkey_export($this->privateKey, $privateKey);
+        return base64_encode(\phpseclib3\Crypt\RSA::loadPrivateKey($privateKey)->sign($str));
+    }
+
+    /**
+     * @param $str
+     * @param $sign
+     * @return mixed
+     */
     public function verifyPss($str, $sign)
     {
-        $output = openssl_pkey_get_details($this->publicKey)['key'];
-        return \phpseclib3\Crypt\RSA::loadPublicKey($output)->verify($str, base64_decode($sign));
+        $publicKey = openssl_pkey_get_details($this->publicKey)['key'];
+        return \phpseclib3\Crypt\RSA::loadPublicKey($publicKey)->verify($str, base64_decode($sign));
     }
 
     /**
@@ -73,16 +101,19 @@ class Rsa implements base\Rsa
     }
 
     /**
-     * 一般使用公钥加密
+     *
      * @param $str
      * @return string|null
      */
-    public function publicEncode($str): ?string
+    public function publicDecode($str): ?string
     {
         if (!is_string($str)) return null;
-        return openssl_public_decrypt(base64_decode($str), $data, $this->publicKey) ? base64_encode($data) : null;
+        return openssl_public_decrypt(base64_decode($str), $data, $this->publicKey) ? $data : null;
     }
 
+    /**
+     * 释放资源
+     */
     public function __destruct()
     {
         if (!empty($this->privateKey)) openssl_free_key($this->privateKey);

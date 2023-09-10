@@ -29,5 +29,5 @@ interface Rsa
 
     public function privateEncode($str);
 
-    public function publicEncode($str);
+    public function publicDecode($str);
 }

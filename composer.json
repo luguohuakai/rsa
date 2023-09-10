@@ -18,5 +18,8 @@
             "name": "DM",
             "email": "769245396@qq.com"
         }
-    ]
+    ],
+    "require-dev": {
+        "codeception/codeception": "4.2"
+    }
 }
