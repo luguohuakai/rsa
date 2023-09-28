@@ -1,30 +1,27 @@
 <?php
 
-namespace Luguohuakai\Rsa;
+namespace luguohuakai\rsa;
 
 class Rsa implements base\Rsa
 {
     private $privateKey;
-    private $privateKeyString;
     private $publicKey;
-    private $publicKeyString;
 
     /**
-     * @param string $privateKeyFile 私钥位置
-     * @param string $publicKeyFile 公钥位置
+     * @param string $privateKeyFile 私钥文件位置 /path/to/private.pem
+     * @param string $publicKeyFile 公钥文件位置 /path/to/public.pem
      */
     public function __construct(string $privateKeyFile, string $publicKeyFile)
     {
         $this->privateKey = openssl_pkey_get_private("file://$privateKeyFile");
-//        openssl_get_privatekey($this->privateKey);
-
         $this->publicKey = openssl_pkey_get_public("file://$publicKeyFile");
     }
 
     /**
+     * 私钥签名
      * @param $str
      * @param int $algo
-     * @return string|null
+     * @return string|null 签名值进行base64_encode
      */
     public function sign($str, int $algo = OPENSSL_ALGO_SHA1): ?string
     {
@@ -33,6 +30,7 @@ class Rsa implements base\Rsa
     }
 
     /**
+     * 公钥验签
      * @param $str
      * @param $sign
      * @param int $algo
@@ -47,8 +45,9 @@ class Rsa implements base\Rsa
     }
 
     /**
+     * PSS模式 私钥签名
      * @param $str
-     * @return string
+     * @return string 签名值进行base64_encode
      */
     public function signPss($str): string
     {
@@ -57,6 +56,7 @@ class Rsa implements base\Rsa
     }
 
     /**
+     * PSS模式 公钥验签
      * @param $str
      * @param $sign
      * @return mixed
@@ -70,7 +70,7 @@ class Rsa implements base\Rsa
     /**
      * 一般使用公钥加密
      * @param $str
-     * @return string|null
+     * @return string|null 返回值进行base64_encode
      */
     public function encode($str): ?string
     {
@@ -92,7 +92,7 @@ class Rsa implements base\Rsa
     /**
      * 使用私钥加密
      * @param $str
-     * @return string|null
+     * @return string|null 返回值进行base64_encode
      */
     public function privateEncode($str): ?string
     {
@@ -101,7 +101,7 @@ class Rsa implements base\Rsa
     }
 
     /**
-     *
+     * 使用公钥解密
      * @param $str
      * @return string|null
      */

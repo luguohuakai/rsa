@@ -1,6 +1,6 @@
 <?php
 
-namespace Luguohuakai\Rsa\base;
+namespace luguohuakai\rsa\base;
 
 interface Rsa
 {

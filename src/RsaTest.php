@@ -1,6 +1,6 @@
 <?php
 
-namespace Luguohuakai\Rsa;
+namespace luguohuakai\rsa;
 
 require '../vendor/autoload.php';
 
